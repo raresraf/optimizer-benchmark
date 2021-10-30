@@ -1,24 +1,24 @@
 import argparse
-import numpy as np
-from tqdm import tqdm
 
+import numpy as np
 import torch
-import torch.optim as optim
-from torch.nn import CrossEntropyLoss
-from torch.utils.data import DataLoader
 import torch.backends.cudnn as cudnn
+import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+from torch.nn import CrossEntropyLoss
+from torch.utils.data import DataLoader
+from tqdm import tqdm
 
-from models.resnet_cifar10 import ResNet34
+from models.resnet_cifar10 import ResNet18
 from optimizers import parse_optimizer, supported_optimizers
 
 
 def parse_args(argv=None):
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-    parser.add_argument('--model', default='resnet34', type=str, help='model',
-                        choices=['resnet34'])
+    parser.add_argument('--model', default='resnet18', type=str, help='model',
+                        choices=['resnet18'])
     parser.add_argument('--optim', type=str, help='optimizer', required=True,
                         choices=supported_optimizers())
     parser.add_argument('--seed', type=int, default=123, help='Random seed to use. default=123.')
@@ -45,11 +45,11 @@ def build_dataset():
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True,
                                             transform=transform_train)
-    train_loader = DataLoader(trainset, batch_size=128, shuffle=True, num_workers=4)
+    train_loader = DataLoader(trainset, batch_size=16, shuffle=True, num_workers=4)
 
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True,
                                            transform=transform_test)
-    test_loader = DataLoader(testset, batch_size=100, shuffle=False, num_workers=4)
+    test_loader = DataLoader(testset, batch_size=8, shuffle=False, num_workers=4)
 
     # classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
@@ -58,7 +58,7 @@ def build_dataset():
 
 def build_model(model, device):
     net = {
-        'resnet34': ResNet34,
+        'resnet18': ResNet18,
     }[model]()
     net = net.to(device)
 
@@ -94,7 +94,8 @@ def train_epoch(net, epoch, device, data_loader, optimizer, criterion):
     train_loss = 0
     correct = 0
     total = 0
-    for batch_idx, (inputs, targets) in tqdm(enumerate(data_loader), desc='Epoch {}'.format(epoch), total=len(data_loader)):
+    for batch_idx, (inputs, targets) in tqdm(enumerate(data_loader), desc='Epoch {}'.format(epoch),
+                                             total=len(data_loader)):
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         outputs = net(inputs)
@@ -139,7 +140,7 @@ def train_cifar10(opt, optimizer_opts):
 
     if opt.wandb_project:
         import wandb
-        wandb.init(project=opt.wandb_project, name=run_name, config=opt)
+        wandb.init(project=opt.wandb_project, entity="raresraf", name=run_name, config=opt)
         wandb.watch(net)
 
     for epoch in range(opt.epochs):

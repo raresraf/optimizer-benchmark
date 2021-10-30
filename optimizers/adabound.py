@@ -1,5 +1,6 @@
-"""Code copied from https://github.com/Luolc/AdaBound/blob/master/adabound/adabound.py"""
+"""Code duplicated from https://github.com/Luolc/AdaBound/blob/master/adabound/adabound.py"""
 import math
+
 import torch
 from torch.optim.optimizer import Optimizer
 
@@ -117,6 +118,7 @@ class AdaBound(Optimizer):
                 p.data.add_(-step_size)
 
         return loss
+
 
 class AdaBoundW(Optimizer):
     """Implements AdaBound algorithm with Decoupled Weight Decay (arxiv.org/abs/1711.05101)

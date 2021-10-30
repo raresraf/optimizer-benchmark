@@ -1,11 +1,9 @@
 import argparse
+
 import torch.optim as optim
 
 from .adabound import AdaBound
-from .rmsprop import RMSprop, RMSprop_LRD
-from .sgd import SGD_LRD, SGDAggMo
-from .adam import Adam_LRD
-from .radam import RAdam_LRD, RAdam
+from .radam import RAdam
 
 __all__ = ['parse_optimizer', 'supported_optimizers']
 
@@ -17,19 +15,6 @@ optimizer_defaults = {
         'weight_decay': 5e-4,
         'nesterov': False,
     }),
-    'sgd_lrd': (SGD_LRD, 'SGDM_LRD', {
-        'lr': 0.1,
-        'momentum': 0.9,
-        'dampening': 0.0,
-        'weight_decay': 5e-4,
-        'nesterov': False,
-        'dropout': 0.5,
-    }),
-    'sgd_aggmo': (SGDAggMo, 'SGDM_AGGMO', {
-        'lr': 0.1,
-        'weight_decay': 5e-4,
-        'betas': [0.0, 0.9, 0.99],
-    }),
     'adam': (optim.Adam, 'ADAM', {
         'lr': 0.001,
         'weight_decay': 5e-4,
@@ -37,43 +22,12 @@ optimizer_defaults = {
         'eps': 1e-8,
         'amsgrad': False,
     }),
-    'adam_lrd': (Adam_LRD, 'ADAM_LRD', {
-        'lr': 0.001,
-        'weight_decay': 5e-4,
-        'betas': (0.9, 0.999),
-        'eps': 1e-8,
-        'dropout': 0.5,
-    }),
     'radam': (RAdam, 'RADAM', {
         'lr': 0.03,
         'weight_decay': 5e-4,
         'betas': (0.9, 0.999),
         'eps': 1e-8,
         'degenerated_to_sgd': True,
-    }),
-    'radam_lrd': (RAdam_LRD, 'RADAM_LRD', {
-        'lr': 0.03,
-        'weight_decay': 5e-4,
-        'betas': (0.9, 0.999),
-        'eps': 1e-8,
-        'dropout': 0.5,
-    }),
-    'rmsprop': (RMSprop, 'RMSprop', {
-        'lr': 0.001,
-        'weight_decay': 5e-4,
-        'eps': 1e-8,
-        'alpha': 0.99,
-        'momentum': 0.9,
-        'centered': False,
-    }),
-    'rmsprop_lrd': (RMSprop_LRD, 'RMSprop_LRD', {
-        'lr': 0.001,
-        'weight_decay': 5e-4,
-        'eps': 1e-8,
-        'alpha': 0.99,
-        'momentum': 0.9,
-        'centered': False,
-        'dropout': 0.5,
     }),
     'adabound': (AdaBound, 'AdaBound', {
         'lr': 0.001,
